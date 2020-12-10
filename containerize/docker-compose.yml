@@ -1,8 +1,25 @@
 version: "3"
 services:
   app:
+    build: ./app
     container_name: containerize_app_1
-    # your code goes here ...
+    volumes:
+      - ./app:/app
+    environment:
+      - ENVIRONMENT=docker
+      - FLASK_APP=/app/src/server.py
+      - FLASK_DEBUG=1
+    command: python -u -m flask run --port 8000 --host 0.0.0.0
+
   nginx:
+    image: nginx:1.9
     container_name: containerize_nginx_1
-    # your code goes here ...
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - app
+    volumes:
+      - ./nginx/files/localhost.crt:/etc/ssl/certs/nginx/localhost.crt
+      - ./nginx/files/localhost.key:/etc/ssl/certs/nginx/localhost.key
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
