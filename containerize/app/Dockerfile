@@ -1,12 +1,14 @@
-## Build the image based python3 
 FROM python:3
-## Copy all the packages
+
 COPY . /app
-## Change the default folder 
 WORKDIR /app
-## Install all packages
+
+ENV ENVIRONMENT=docker
+ENV FLASK_APP=/app/src/server.py
+ENV FLASK_DEBUG=0
+
 RUN pip install -r /app/src/requirements.txt
-## Default port is 5000
-EXPOSE 5000 
-## When contianer is stared python app.py 
-CMD ["/bin/sh", "-c", "python /app/src/server.py"]
+
+EXPOSE 8000
+
+CMD ["python", "-u", "-m", "flask", "run", "--no-reload", "--port", "8000", "--host", "0.0.0.0"]
